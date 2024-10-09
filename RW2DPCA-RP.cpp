@@ -11,16 +11,16 @@
 using namespace std;
 using namespace cv;
 
-// º¯Êı£ºÏÔÊ¾³ÌĞòÊ¹ÓÃµÄÄÚ´æĞÅÏ¢
+// å‡½æ•°ï¼šæ˜¾ç¤ºç¨‹åºä½¿ç”¨çš„å†…å­˜ä¿¡æ¯
 void showMemoryInfo(void)
 {
 	HANDLE handle = GetCurrentProcess();
 	PROCESS_MEMORY_COUNTERS pmc;
 	GetProcessMemoryInfo(handle, &pmc, sizeof(pmc));
-	cout << "ÄÚ´æÊ¹ÓÃ£º" << pmc.WorkingSetSize / 1000 << "K/" << pmc.PeakWorkingSetSize / 1000 << "K + " << pmc.PagefileUsage / 1000 << "K/" << pmc.PeakPagefileUsage / 1000 << "K" << endl;
+	cout << "å†…å­˜ä½¿ç”¨ï¼š" << pmc.WorkingSetSize / 1000 << "K/" << pmc.PeakWorkingSetSize / 1000 << "K + " << pmc.PagefileUsage / 1000 << "K/" << pmc.PeakPagefileUsage / 1000 << "K" << endl;
 }
 
-// º¯Êı£º¼ÆËã¾ØÕó A µÄÔªËØÆ½·½ºÍµÄÆ½·½¸ù
+// å‡½æ•°ï¼šè®¡ç®—çŸ©é˜µ A çš„å…ƒç´ å¹³æ–¹å’Œçš„å¹³æ–¹æ ¹
 double sumF(Mat A)
 {
 	double s = 0.0;
@@ -37,44 +37,44 @@ double sumF(Mat A)
 
 void main()
 {
-	// ¿ªÊ¼¼ÆÊ±
+	// å¼€å§‹è®¡æ—¶
 	clock_t start, finish;
 	double duration;
 	start = clock();
 
-	// ¼ÆËãÄÚ´æÊ¹ÓÃÇé¿ö
+	// è®¡ç®—å†…å­˜ä½¿ç”¨æƒ…å†µ
 	showMemoryInfo();
-	cout << "»ØÊÕËùÓĞ¿É»ØÊÕµÄÄÚ´æ" << endl;
+	cout << "å›æ”¶æ‰€æœ‰å¯å›æ”¶çš„å†…å­˜" << endl;
 	EmptyWorkingSet(GetCurrentProcess());
 	showMemoryInfo();
-	cout << "¿ªÊ¼¶¯Ì¬·ÖÅäÄÚ´æ" << endl;
+	cout << "å¼€å§‹åŠ¨æ€åˆ†é…å†…å­˜" << endl;
 
-	// ¶¨Òå±äÁ¿
-#define eigenNum  30 // ÌØÕ÷ÏòÁ¿ÊıÁ¿£¨¿Éµ÷Õû£©
+	// å®šä¹‰å˜é‡
+#define eigenNum  30 // ç‰¹å¾å‘é‡æ•°é‡ï¼ˆå¯è°ƒæ•´ï¼‰
 
-	int sampleNum = 160;        // Ñù±¾ÊıÁ¿£¨¿Éµ÷Õû£©
+	int sampleNum = 160;        // æ ·æœ¬æ•°é‡ï¼ˆå¯è°ƒæ•´ï¼‰
 	//int originrows = 112, origincols = 92;//resize
-	int nrows = 200, ncols = 50; // Ñù±¾´óĞ¡£¨¿Éµ÷Õû£©
-	float  s = 2; // ¿Éµ÷Õû
-	int classNum = 8; // ÑµÁ·¼¯Àà±ğÊı
-	int perclassNum = 20; // Ã¿ÀàÑµÁ·¼¯Í¼Æ¬µÄÊıÁ¿
-	int max_iteration = 40; // µü´ú×î´ó´ÎÊı
-	Mat meanSample = Mat::zeros(nrows, ncols, CV_32FC1);    // Ñù±¾µÄÆ½¾ùÖµ
-	Mat totalSample = Mat::zeros(nrows, ncols, CV_32FC1);   // Ñù±¾µÄ×ÜºÍ
+	int nrows = 200, ncols = 50; // æ ·æœ¬å¤§å°ï¼ˆå¯è°ƒæ•´ï¼‰
+	float  s = 2; // å¯è°ƒæ•´
+	int classNum = 8; // è®­ç»ƒé›†ç±»åˆ«æ•°
+	int perclassNum = 20; // æ¯ç±»è®­ç»ƒé›†å›¾ç‰‡çš„æ•°é‡
+	int max_iteration = 40; // è¿­ä»£æœ€å¤§æ¬¡æ•°
+	Mat meanSample = Mat::zeros(nrows, ncols, CV_32FC1);    // æ ·æœ¬çš„å¹³å‡å€¼
+	Mat totalSample = Mat::zeros(nrows, ncols, CV_32FC1);   // æ ·æœ¬çš„æ€»å’Œ
 	Mat oneSample(nrows, ncols, CV_32FC1);
 	// Mat sizeSample = Mat::zeros(nrows, ncols, CV_32FC1);
-	int ConstrainNum = 1; // Ô¼Êø×Ü¿éÊı£¬Òª±£Ö¤ nrows / ConstrainNum ÎªÕûÊı
-	int computerNum = sampleNum * nrows / ConstrainNum; // ²Ù×÷µÄÔ¼ÊøºóµÄ¿éÊı
+	int ConstrainNum = 1; // çº¦æŸæ€»å—æ•°ï¼Œè¦ä¿è¯ nrows / ConstrainNum ä¸ºæ•´æ•°
+	int computerNum = sampleNum * nrows / ConstrainNum; // æ“ä½œçš„çº¦æŸåçš„å—æ•°
 	Mat ag = Mat::zeros(ConstrainNum, ncols, CV_32FC1);
 
-	// ³õÊ¼»¯ W
+	// åˆå§‹åŒ– W
 	Mat U, S, VT;
-	vector<Mat> samples;        // ´æ´¢Ñù±¾
-	vector<Mat> cosamples;        // ´æ´¢Ô¼ÊøÑù±¾
-	// ¼ÓÔØÑù±¾²¢¼ÆËã×ÜÑù±¾
+	vector<Mat> samples;        // å­˜å‚¨æ ·æœ¬
+	vector<Mat> cosamples;        // å­˜å‚¨çº¦æŸæ ·æœ¬
+	// åŠ è½½æ ·æœ¬å¹¶è®¡ç®—æ€»æ ·æœ¬
 	for (int i = 0; i < sampleNum; i++)
 	{
-		string imagePath = "E:\\random_noise_databases\\ETH-80_originalºó×öÊı¾İ¼¯\\ETH_0.4_0.10-0.30_100x100\\block200x50\\train12\\" + to_string(static_cast<long long>(i)) + ".png"; // Í¼ÏñÂ·¾¶
+		string imagePath = "E:\\random_noise_databases\\ETH-80_originalååšæ•°æ®é›†\\ETH_0.4_0.10-0.30_100x100\\block200x50\\train12\\" + to_string(static_cast<long long>(i)) + ".png"; // å›¾åƒè·¯å¾„
 		Mat srcImage = imread(imagePath, 0);
 		srcImage.clone().convertTo(oneSample, CV_32FC1, 1, 0);
 		// resize(oneSample, sizeSample, sizeSample.size());
@@ -82,11 +82,11 @@ void main()
 		samples.push_back(oneSample.clone());
 	}
 
-	//load the samples and compute the total samples    °´Àà±ğ·ÖµÄÊı¾İ¼¯
+	//load the samples and compute the total samples    æŒ‰ç±»åˆ«åˆ†çš„æ•°æ®é›†
 	/*for (int q = 1; q <= classNum; q++) {
 		for (int i = 0; i < perclassNum; i++)
 		{
-			string imagePath = "E:\\random_noise_databases\\NECºó×öÊı¾İ¼¯\\NEC_0.4_0.10-0.30_96X116\\train1\\" + to_string(static_cast<long long>(q)) + "\\" + to_string(static_cast<long long>(i)) + ".jpg";//imagepath to_string(static_cast<long long>(i))
+			string imagePath = "E:\\random_noise_databases\\NECååšæ•°æ®é›†\\NEC_0.4_0.10-0.30_96X116\\train1\\" + to_string(static_cast<long long>(q)) + "\\" + to_string(static_cast<long long>(i)) + ".jpg";//imagepath to_string(static_cast<long long>(i))
 			Mat srcImage = imread(imagePath, 0);
 			srcImage.clone().convertTo(oneSample, CV_32FC1, 1, 0);
 			totalSample += oneSample;
@@ -113,8 +113,8 @@ void main()
 		float d = 0;
 		Mat G = Mat::zeros(ncols, ncols, CV_32FC(1));
 		Mat H = Mat::zeros(ncols, K, CV_32FC(1));
-		Mat w = Mat::eye(ncols, K, CV_32FC(1));//×¢Òâ³õÊ¼¸³ÖµÏ¸½Ú£¬·ñÔò»áµÃ³ö0¾ØÕó´íÎó½á¹û
-		w = w / 20;  //ÈÃwÖ÷¶Ô½ÇÏßÔªËØ±äµÃ¸üĞ¡£¬ÀûÓÚÊÕÁ²
+		Mat w = Mat::eye(ncols, K, CV_32FC(1));//æ³¨æ„åˆå§‹èµ‹å€¼ç»†èŠ‚ï¼Œå¦åˆ™ä¼šå¾—å‡º0çŸ©é˜µé”™è¯¯ç»“æœ
+		w = w / 20;  //è®©wä¸»å¯¹è§’çº¿å…ƒç´ å˜å¾—æ›´å°ï¼Œåˆ©äºæ”¶æ•›
 		Mat ws = Mat::zeros(ncols, K, CV_32FC(1));
 		Mat store_redusial = Mat::zeros(max_iteration, 1, CV_32FC1);
 		do {
@@ -124,7 +124,7 @@ void main()
 			double E = 0, C = 0, F = 0, objective_function = 0;
 			H = 0; double d = 0;
 			double gamu = 0.000001;
-			w.copyTo(ws);//±£´æwµÄ¸±±¾
+			w.copyTo(ws);//ä¿å­˜wçš„å‰¯æœ¬
 			for (int i = 0; i < computerNum; i++)
 			{
 				ag = cosamples[i];
@@ -136,9 +136,9 @@ void main()
 				//for (int j = 0; j < BlockNum; j++) {C = sumL2(ag.row(j));d += pow(C, p );}
 
 				//cout << "d=" << d << endl;
-				//aµÄb´Î·½
+				//açš„bæ¬¡æ–¹
 				E = sumF(ag - ag * w*w.t());
-				d = C * F*E + gamu;// ±ÜÃâÎªÁã
+				d = C * F*E + gamu;// é¿å…ä¸ºé›¶
 				H += ag.t()*ag*w / d;
 				//objective_function += E * F / C;
 
@@ -150,27 +150,27 @@ void main()
 			//cout << "objective_function="<< objective_function << endl;
 			//store_redusial.at<float>(iteration-1,0) = float(sumF(w - ws));
 			if (iteration >= max_iteration) {
-				cout << "¸ÃÊÕÁ²Ìõ¼şÏÂ£¬K=" << K << "ÎŞ·¨½øĞĞ£¬ĞèÒªµ÷ÕûÊÕÁ²Ìõ¼ş,ÒÔÉÏÎªw-wsµÄF·¶Êı²Ğ²î" << endl;
+				cout << "è¯¥æ”¶æ•›æ¡ä»¶ä¸‹ï¼ŒK=" << K << "æ— æ³•è¿›è¡Œï¼Œéœ€è¦è°ƒæ•´æ”¶æ•›æ¡ä»¶,ä»¥ä¸Šä¸ºw-wsçš„FèŒƒæ•°æ®‹å·®" << endl;
 				//cout << store_redusial << endl;
-				break;//Ìø³öwhileÑ­»·£¬Ö±½Ó±£´æ×îºóÒ»´Îµü´úµÄ½á¹û
+				break;//è·³å‡ºwhileå¾ªç¯ï¼Œç›´æ¥ä¿å­˜æœ€åä¸€æ¬¡è¿­ä»£çš„ç»“æœ
 
 			}
 			cout << sumF(w - ws) << endl;
-		} while (sumF(w - ws) / sumF(w) > 0.008); //ÊÕÁ²Ìõ¼ş
+		} while (sumF(w - ws) / sumF(w) > 0.008); //æ”¶æ•›æ¡ä»¶
 
 		CvMat vecs = w;
-		char store[256]; sprintf_s(store, "E:\\ËùÓĞÊµÑétest test¶Ô±È\\BPCA\\Height_diffnorms_2DPCA\\ETH200x50\\12\\hebing%d.txt", K);
+		char store[256]; sprintf_s(store, "E:\\æ‰€æœ‰å®éªŒtest testå¯¹æ¯”\\BPCA\\Height_diffnorms_2DPCA\\ETH200x50\\12\\hebing%d.txt", K);
 		cvSave(store, &vecs);
 
 		CvMat agSample = meanSample;
-		cvSave("E:\\ËùÓĞÊµÑétest test¶Ô±È\\BPCA\\Height_diffnorms_2DPCA\\ETH200x50\\12\\meanSample1.txt", &agSample);
+		cvSave("E:\\æ‰€æœ‰å®éªŒtest testå¯¹æ¯”\\BPCA\\Height_diffnorms_2DPCA\\ETH200x50\\12\\meanSample1.txt", &agSample);
 		cout << "iteration=" << iteration << endl;
-		//¼ÆËãÑµÁ·ÌØÕ÷¾ØÕó
+		//è®¡ç®—è®­ç»ƒç‰¹å¾çŸ©é˜µ
 	/*	Mat trainDataMat = Mat::zeros(nrows, eigenNum, CV_32FC1);;
 		for (int i = 0; i < sampleNum; i++)
 		{
 
-			Mat srcSample = samples[i] - meanSample;//ÖĞĞÄ»¯´¦Àí
+			Mat srcSample = samples[i] - meanSample;//ä¸­å¿ƒåŒ–å¤„ç†
 			trainDataMat = srcSample * w;
 			cout << "image_id=" << i << endl;
 			for (int ii = 0; ii < eigenNum; ii++) {
@@ -180,7 +180,7 @@ void main()
 			}*/
 			/*CvMat storeMat;
 			storeMat = trainDataMat;
-			char store[256]; sprintf_s(store, "E:\\random_noise_databases\\¿ÉÊÓ»¯Êı¾İ\\Éú³ÉµÄ½µÎ¬×Ó¿Õ¼äÍ¶Ó°\\GHEIGHT\\s=2\\resize\\noise\\2Î¬Í¶Ó°Í¼Æ¬%d.txt", i);
+			char store[256]; sprintf_s(store, "E:\\random_noise_databases\\å¯è§†åŒ–æ•°æ®\\ç”Ÿæˆçš„é™ç»´å­ç©ºé—´æŠ•å½±\\GHEIGHT\\s=2\\resize\\noise\\2ç»´æŠ•å½±å›¾ç‰‡%d.txt", i);
 			cvSave(store, &storeMat);*/
 
 			//}
@@ -193,7 +193,7 @@ void main()
 	//finish timing
 	finish = clock();
 	duration = (double)(finish - start) / CLOCKS_PER_SEC;
-	cout << "ÑµÁ·¹ı³Ì½áÊø,¹²ºÄÊ±£º" << duration << "Ãë" << endl;
+	cout << "è®­ç»ƒè¿‡ç¨‹ç»“æŸ,å…±è€—æ—¶ï¼š" << duration << "ç§’" << endl;
 
 	waitKey(0);
 
