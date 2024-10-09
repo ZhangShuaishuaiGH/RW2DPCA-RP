@@ -1,2 +1,2 @@
-# GP-2DPCA
- A generalized proportional 2DPCA (GP-2DPCA) method with L21-norm minimization.
+# RW2DPCA-RP
+ Robust weighted 2DPCA via joint reconstruction and projection for feature extraction.
